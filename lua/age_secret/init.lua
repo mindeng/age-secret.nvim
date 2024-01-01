@@ -60,9 +60,13 @@ function M.setup(user_config)
 		end,
 	})
 
+	local last_pos = nil
+
 	vim.api.nvim_create_autocmd({ "BufWritePre", "FileWritePre" }, {
 		pattern = "*.age",
 		callback = function()
+			last_pos = vim.api.nvim_win_get_cursor(0)
+
 			-- Set local buffer options for .age files
 			vim.bo.binary = true -- Equivalent to 'setlocal bin'
 
@@ -82,6 +86,11 @@ function M.setup(user_config)
 
 			-- Set local buffer options for .age files
 			vim.bo.binary = false -- Equivalent to 'setlocal nobin'
+
+			-- jump back to the last position
+			if last_pos then
+				vim.api.nvim_win_set_cursor(0, last_pos)
+			end
 		end,
 	})
 
